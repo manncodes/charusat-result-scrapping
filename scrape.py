@@ -69,4 +69,4 @@ for i in range(1, 165):
 driver.quit()
 
 df = pd.DataFrame(resultlist)
-df.to_csv('results_new.csv', index=False)
+df.to_csv('results/results_new.csv', index=False)

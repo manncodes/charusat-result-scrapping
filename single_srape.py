@@ -67,4 +67,4 @@ except:
 driver.quit()
 
 df = pd.DataFrame(resultlist)
-df.to_csv('results_new.csv', index=False)
+df.to_csv('results/results_single.csv', index=False)

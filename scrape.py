@@ -1,3 +1,4 @@
+import re
 import math
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.ui import Select
@@ -33,13 +34,39 @@ for i in range(1, 165):
             result['ID'] = ID
             result['name'] = Name.text
             result['SGPA'] = SGPA.text
-            resultlist.append(result)
             print(result)
+            table = doc.find('table',id = 'uclGrd1_grdResult')
+            body_rows = table.find_all('tr')
+            courseResult = []
+            for row_num in range(1,len(body_rows)):
+                course = []
+                for row_item in body_rows[row_num].find_all("td"): 
+                    aa = re.sub("(\xa0)|(\n)|,","",row_item.text)
+                    course.append(aa)
+                courseResult.append(course)
+            
+            practicalFlag = 0
+            courseList = []
+            course={}
+            for i in courseResult:
+                if len(i) == 6 and practicalFlag == 0:
+                    course['CourseName'] = i[2]
+                    course['CourseID'] = i[1]
+                    course['TheoryGrade'] = i[-1]
+                    practicalFlag = 1
+                if len(i) == 6 and practicalFlag == 1:
+                    course['PracticalGrade'] = i[-1]
+                    courseList.append(course)
+                    course = {}
+                    practicalFlag = 0
+            result['Course Result'] = courseList
+            resultlist.append(result)
         except:
             pass
     except:
         pass
 
+driver.quit()
 
 df = pd.DataFrame(resultlist)
-df.to_csv('results.csv', index=False)
+df.to_csv('results_new.csv', index=False)
